@@ -5,7 +5,9 @@ http://www.isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loop
 */
 
 /* GLOBALS */
-var level = 1;
+
+// retrieve level from level select page
+var level = localStorage.level;
 bugList = [];
 foodList = [];
 var canvas = document.getElementById("canvas");
@@ -13,13 +15,6 @@ var context = canvas.getContext('2d');
 var timeElapsed = 0;
 var bugTimer = 3;
 var userScore = 0;
-
-
-
-/* RNG Calculator */
-function getRandomIntInclusive(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 // Debugging
 document.onmousemove = function(e){
@@ -29,15 +24,22 @@ document.onmousemove = function(e){
     box.textContent = "X: " + x + " Y: " + y;
 };
 
-// Test foods
+
+/* BEFORE MAIN LOOP RUN CODE */
+
+// make food
 for (var i = 0; i < 5; i++) {
     makeFood();
 }
 
+// Set level text
+var levelText = document.getElementById("level-text");
+levelText.innerText = "Level: " + level;
 
 
 
-/* START */
+
+/* START MAIN LOOP */
 start();
 
 
@@ -93,20 +95,26 @@ function mainLoop(timestamp) {
         makeBug();
         bugTimer += num;
     }
+
+
+    // Bug movement and calculations
+    for (var i=0; i < bugList.length; i++) {
+        
+    }    
+
+
+
     // draw the bugs
     for (var i = 0; i < bugList.length; i++) {
         drawBug(bugList[i]);
     }
 
-    // Bug movement
-    
-
-
 
     // Keep track of time (if > 60 seconds, end)
-    timeElapsed += timestep;
+    timeElapsed = lastFrameTimeMs;
     if (timeElapsed / 1000 > 60) {
         stop();
+        gameOver();
         return;
     }
 
@@ -118,6 +126,19 @@ function mainLoop(timestamp) {
     frameID = requestAnimationFrame(mainLoop);
 }
 
+
+
+// Run this code when the game is over (either player lose or time elapsed)
+function gameOver() {
+    console.log("Game over");
+    // recall that level is a string so use == not ===
+    if (level == 1) {
+        localStorage.setItem("highScore1", userScore);
+    }
+    else if (level == 2) {
+        localStorage.setItem("highScore2", userScore);
+    }
+}
 
 
 
@@ -157,7 +178,7 @@ function drawBox(interp) {
 }
 
 
-/* UTILITY FUNCTIONS */
+/* UTILITY FUNCTIONS (from web source) */
 
 /* Start the main loop */
 function start() {
@@ -181,6 +202,7 @@ function stop() {
     cancelAnimationFrame(frameID);
 
     /* Added */
+    // need to re-make info bar so that the pause/play symbol switches
     makeInfoBar();
 }
 
@@ -202,4 +224,11 @@ function end(fps) {
 // if frame rate goes to shit or something like that, do this
 function panic() {
     delta = 0;
+}
+
+/* OTHER HELPERS */
+
+// rng calculator
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }

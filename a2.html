@@ -8,16 +8,16 @@
 <body>
 	<h1>Welcome</h1>
 
-	<div id="menu">
+	<form id="menu">
 		<p>Level:</p>
-	  <input type="radio" name="gender" value="male">1<br>
-	  <input type="radio" name="gender" value="female">2<br>
+	  <input id="radio1" type="radio" name="level" value="level-1" checked="checked">1<br>
+	  <input id="radio2" type="radio" name="level" value="level-2">2<br>
 		<p>High Score:</p>
 		<!-- Display high score here -->
 		<div id="high-score"></div>
 		
-		<a id="start_button" href="game.html">Start</a>
-	</div>
+		<a id="submit-button" href="game.html">GO</a>
+	</form>
 
 	<script type="text/javascript" src="main.js"></script>
 
