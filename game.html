@@ -1,15 +1,25 @@
+<!-- Game page. Contains the canvas where the game is
+	to be played. -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Game Page</title>
-	<link rel="stylesheet" href="game_style.css">
+	<link rel="stylesheet" href="game.css">
+
 </head>
-
 <body>
-	<canvas id="canvas" width="400" height="600"></canvas>	
+	<canvas id="canvas" width="400" height="600"></canvas>
+
+	<div id="box"></div>
+	<div id="fpsDisplay"></div>
+	<div id="mouseCoords"></div>
+
+	<script type="text/javascript" src="bug.js"></script>
+	<script type="text/javascript" src="food.js"></script>
+	<script type="text/javascript" src="infobar.js"></script>
+	<script type="text/javascript" src="game.js"></script>
+
 </body>
-
-<script type="text/javascript" src="canvas.js"></script>
-
 </html>
