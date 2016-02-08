@@ -8,6 +8,8 @@ function Food(x, y, w, h) {
     this.h = h
 }
 
+Food.prototype.type = "Food";
+
 // Create a piece of food (has to be in the bottom half of the canvas)
 function makeFood() {
 	var x, y, w, h;
@@ -33,3 +35,9 @@ function drawFood(food) {
     context.fillRect(x, y, width, height);
 }
 
+// populate the foodList array with num amount of food objects
+function foodInit(num) {
+    for (var i = 0; i < num; i++) {
+        makeFood();
+    }
+}
