@@ -1,16 +1,22 @@
 // Constructor to make bugs
-function Bug(speed, x, y, colour, score) {
+function Bug(speed, x, y, w, h, colour, score) {
     this.x = x,
     this.y = y,
+    this.w = w,
+    this.h = h,
     this.speed = speed,
     this.colour = colour,
     this.score = score
 }
 
+Bug.prototype.type = "Bug";
+
 
 /* Create a bug (randomly as specified in the assignment) */
 function makeBug() {
     var colour, speed, score, x, y;
+    var width = 10;
+    var height = 10;
 
     // Random generation of bug type
     var randomChoice = getRandomIntInclusive(1, 10);
@@ -39,7 +45,7 @@ function makeBug() {
 
     // y spawn will be fixed right below the info bar
 
-    var bug = new Bug(speed, x, 60, colour, score);
+    var bug = new Bug(speed, x, 60, width, height, colour, score);
     bugList.push(bug);
 
 }
@@ -49,6 +55,8 @@ function drawBug(bug) {
     var colour = bug.colour;
     var x = bug.x;
     var y = bug.y;
+    var width = bug.w;
+    var height = bug.h;
 
     // Set the colour
     context.fillStyle = colour;
@@ -56,12 +64,12 @@ function drawBug(bug) {
 
     context.beginPath();
     context.moveTo(x, y);
-    context.bezierCurveTo(x+5, y+5, x+5, y+5, x, y+10);
-    context.bezierCurveTo(x-5, y+5, x-5, y+5, x, y);
+    context.bezierCurveTo(x+(width/2), y+(height/2), x+(width/2), y+(height/2), x, y+width);
+    context.bezierCurveTo(x-(width/2), y+(height/2), x-(width/2), y+(height/2), x, y);
     context.stroke();
     context.fill();
     context.moveTo(x, y);
-    context.arc(x, y+11, 3, 0, Math.PI*2, true);
+    context.arc(x, y+(height+1), (height/2)-2, 0, Math.PI*2, true);
     context.fill();
     context.closePath();
 
@@ -69,7 +77,6 @@ function drawBug(bug) {
     context.fillStyle = "black";
     context.strokeStyle = "black";
 }
-
 
 
 

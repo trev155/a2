@@ -10,15 +10,26 @@
 
 </head>
 <body>
-	<canvas id="canvas" width="400" height="600"></canvas>
+	<h1 class="center-text">Game Play</h1>
+	<div class="center-text" id="level-text">Level</div>
 
-	<div id="box"></div>
+	<canvas class="center-block" id="canvas" width="400" height="600"></canvas>
+
+
 	<div id="fpsDisplay"></div>
 	<div id="mouseCoords"></div>
+	<div id="box"></div>
+
+	<p><b>Instructions:</b> Prevent the bugs from getting to the food by clicking on them.</p>
+
+	<div class="hide" id="reset-button"/>Reset</div>
+	<div class="hide" id="quit-button"><a href="a2.html">Quit</a></div>
 
 	<script type="text/javascript" src="bug.js"></script>
 	<script type="text/javascript" src="food.js"></script>
 	<script type="text/javascript" src="infobar.js"></script>
+	<script type="text/javascript" src="bugMovement.js"></script>
+	<!-- this needs to be last -->
 	<script type="text/javascript" src="game.js"></script>
 
 </body>

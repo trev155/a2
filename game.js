@@ -5,7 +5,9 @@ http://www.isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loop
 */
 
 /* GLOBALS */
-var level = 1;
+
+// retrieve level from level select page
+var level = localStorage.level;
 bugList = [];
 foodList = [];
 var canvas = document.getElementById("canvas");
@@ -14,30 +16,39 @@ var timeElapsed = 0;
 var bugTimer = 3;
 var userScore = 0;
 
+var resetButton = document.getElementById("reset-button");
+var quitButton = document.getElementById("quit-button");
 
-
-/* RNG Calculator */
-function getRandomIntInclusive(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Debugging
-document.onmousemove = function(e){
-    var x = e.pageX;
-    var y = e.pageY;
-    var box = document.getElementById("mouseCoords");
-    box.textContent = "X: " + x + " Y: " + y;
-};
-
-// Test foods
-for (var i = 0; i < 5; i++) {
-    makeFood();
-}
+// important stuff for game timer and main loop
+var fpsDisplay = document.getElementById('fpsDisplay'),
+    lastFrameTimeMs = 0,
+    maxFPS = 60,
+    delta = 0,
+    timestep = 1000 / 60,
+    fps = 60,
+    framesThisSecond = 0,
+    lastFpsUpdate = 0,
+    running = false,
+    started = false,
+    frameID = 0;
 
 
 
 
-/* START */
+
+/* BEFORE MAIN LOOP RUN CODE */
+
+// make food
+foodInit(5);
+
+// Set level text
+var levelText = document.getElementById("level-text");
+levelText.innerText = "Level: " + level;
+
+
+
+
+/* START MAIN LOOP */
 start();
 
 
@@ -81,66 +92,213 @@ function mainLoop(timestamp) {
 
     /* ADDED */
 
+    // Bug generation at random intervals
+    if (timeElapsed / 1000 > bugTimer) {
+        var num = getRandomIntInclusive(1, 3);
+        makeBug();
+        bugTimer += num;
+        //bugTimer = 100000000;
+    }
+
+    // Bug movement and calculations
+    for (var i = 0; i < bugList.length; i++) {
+        moveBugs(bugList[i], foodList);
+    }
+
+    // if bug collides with a food item, remove the food item
+    for (var i = 0; i < bugList.length; i++) {
+        for (var j = 0; j < foodList.length; j++) {
+            if (collisionDetect(bugList[i], foodList[j])) {
+                foodList.splice(j, 1);
+            }
+        }
+    }
+
+
+
     // clear the whole canvas area 
     context.clearRect(0, 0, canvas.width, canvas.height);
     // make / draw info bar and components
     makeInfoBar();
     // draw the food
     for (var i = 0; i < foodList.length; i++) { drawFood(foodList[i]); }
-    // Bug generation at random intervals
-    if (timeElapsed / 1000 > bugTimer) {
-        var num = getRandomIntInclusive(1, 3);
-        makeBug();
-        bugTimer += num;
-    }
     // draw the bugs
     for (var i = 0; i < bugList.length; i++) {
         drawBug(bugList[i]);
     }
 
-    // Bug movement
-    
 
-
+    // after removal of a food item - may end up with none left
+    // if so, game over
+    if (foodList.length === 0) {
+        stop();
+        gameOver();
+        return;
+    }
 
     // Keep track of time (if > 60 seconds, end)
     timeElapsed += timestep;
     if (timeElapsed / 1000 > 60) {
         stop();
+        gameOver();
         return;
     }
 
     /* END OF ADDED */
 
 
-    end(fps);
+    // end(fps);
     // go to next frame
     frameID = requestAnimationFrame(mainLoop);
 }
 
 
 
+// Run this code when the game is over (either player lose or time elapsed)
+// also update the high scores
+function gameOver() {
+    console.log("Game over");
+    // recall that level is a string so use == not ===
+    if (level == 1) {
+        var currentHigh = localStorage.getItem("highScore1");
+        if (currentHigh < userScore) {
+            localStorage.setItem("highScore1", userScore);
+        }
+    }
+    else if (level == 2) {
+        var currentHigh = localStorage.getItem("highScore2");
+        if (currentHigh < userScore) {
+            localStorage.setItem("highScore2", userScore);
+        }
+    }
+
+    showGameOverButtons();
+}
+
+
 
 /* HELPERS */
+
+
+
+/* UTILITY FUNCTIONS (from web source) */
+/* Start the main loop */
+function start() {
+    if (!started) {
+        started = true;
+        frameID = requestAnimationFrame(function(timestamp) {
+            drawBox(1); // to remove
+            running = true;
+            lastFrameTimeMs = timestamp;
+            lastFpsUpdate = timestamp;
+            framesThisSecond = 0;
+            frameID = requestAnimationFrame(mainLoop);
+        });
+    }
+}
+/* Stop The main loop */
+function stop() {
+    running = false;
+    started = false;
+    cancelAnimationFrame(frameID);
+    /* Added */
+    // need to re-make info bar so that the pause/play symbol switches
+    makeInfoBar();
+}
+// Runs at the start of each frame
+function begin() {}
+// Runs at the end of each frame
+function end(fps) {}
+// if frame rate goes to shit or something like that, do this
+function panic() {delta = 0; }
+
+
+/* OTHER HELPERS */
+// rng calculator
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// restart the game (invoked as an event listener)
+function reset() {
+    timeElapsed = 0;
+    userScore = 0;
+    bugTimer = 3;
+    bugList = [];
+    foodList = [];
+    foodInit(5);
+    start();
+
+    hideGameOverButtons();
+}
+
+
+
+
+function showGameOverButtons() {
+    resetButton.className = "show";
+    quitButton.className = "show";
+
+    resetButton.addEventListener("click", reset);
+}
+
+function hideGameOverButtons() {
+    resetButton.className = "hide";
+    quitButton.className = "hide";
+}
+
+// click Functions
+
+// Event Listener
+canvas.addEventListener("click", canvasClicked, false);
+
+// Run this function when the canvas is clicked
+// Loop over the bugList, remove the entries that are within the click radius
+function canvasClicked(e) {
+    for (var i = 0; i < bugList.length; i++) {
+        // midpoint of box
+        var bugX = bugList[i].x + bugList[i].w;
+        var bugY = bugList[i].y + bugList[i].h;
+        var radius = 15;
+        if (clickRadius(e.offsetX, e.offsetY, bugX, bugY, radius)) {
+            userScore += bugList[i].score;
+            bugList.splice(i, 1);
+        }
+    }
+}
+
+// return true iff (x,y) is within radius of (bugX, bugY)
+function clickRadius(offsetX, offsetY, bugX, bugY, radius) {
+    x1 = offsetX;
+    y1 = offsetY;
+    x2 = bugX;
+    y2 = bugY;
+    if (Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2)) < radius) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+
+
+
+// Debugging
+document.onmousemove = function(e){
+    var x = e.pageX;
+    var y = e.pageY;
+    var box = document.getElementById("mouseCoords");
+    box.textContent = "X: " + x + " Y: " + y;
+};
+
 // box stuff (will remove after)
 var box = document.getElementById('box'),
     boxPos = 10,
     boxLastPos = 10,
     boxspeed = 0.4,
     limit = 300;
-
-// important stuff for game timer and main loop
-var fpsDisplay = document.getElementById('fpsDisplay'),
-    lastFrameTimeMs = 0,
-    maxFPS = 60,
-    delta = 0,
-    timestep = 1000 / 60,
-    fps = 60,
-    framesThisSecond = 0,
-    lastFpsUpdate = 0,
-    running = false,
-    started = false,
-    frameID = 0;
 
 
 /* Box Functions (will remove later)*/
@@ -154,52 +312,4 @@ function boxUpdate(delta) {
 function drawBox(interp) {
     box.style.left = (boxLastPos + (boxPos - boxLastPos) * interp) + 'px';
     fpsDisplay.textContent = Math.round(fps) + ' FPS';
-}
-
-
-/* UTILITY FUNCTIONS */
-
-/* Start the main loop */
-function start() {
-    if (!started) {
-        started = true;
-        frameID = requestAnimationFrame(function(timestamp) {
-            drawBox(1);
-            running = true;
-            lastFrameTimeMs = timestamp;
-            lastFpsUpdate = timestamp;
-            framesThisSecond = 0;
-            frameID = requestAnimationFrame(mainLoop);
-        });
-    }
-}
-
-/* Stop The main loop */
-function stop() {
-    running = false;
-    started = false;
-    cancelAnimationFrame(frameID);
-
-    /* Added */
-    makeInfoBar();
-}
-
-// Runs at the start of each frame
-function begin() {
-
-}
-
-// Runs at the end of each frame
-function end(fps) {
-    // if (fps < 25) {
-    //     box.style.backgroundColor = 'black';
-    // }
-    // else if (fps > 30) {
-    //     box.style.backgroundColor = 'red';
-    // }
-}
-
-// if frame rate goes to shit or something like that, do this
-function panic() {
-    delta = 0;
 }

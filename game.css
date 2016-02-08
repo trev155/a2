@@ -4,18 +4,12 @@ body {
     margin: 1px;
 }
 
-div {
-    border: 1px solid red;
-}
-
 #box {
     background-color: red;
     height: 20px;
     width: 20px;
-    top: 700px;
-    left: 100px;
+    top: 850px;
     position: absolute;
-    display: none;
 
 }
 
@@ -30,6 +24,32 @@ div {
 canvas {
     border: 1px solid black;
     background-color: #91DFD0;
+
+}
+
+/* Hide by default */
+.hide {
+    display: none;
+}
+
+/* Show by default */
+.show {
+    display: block;
+
+    border: 1px solid red;
+    width: 100px;
+}
+
+/* Centering block object like divs */
+.center-block {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+/* Centering inline stuff */
+.center-text {
+    text-align: center;
 }
 
 /* Don't highlight anything on click-and-drag. */
