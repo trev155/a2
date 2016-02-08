@@ -43,10 +43,74 @@ function closestFood(bug, foodList) {
 	return allDistances[0];
 }
 
+
+/* move bug to closest food in foodList */
+function moveBugs(bugList, foodList) {
+
+	// all projected positions
+	var allProjectedPositions = [];
+
+	for (var i = 0; i < bugList.length; i++) {
+		// array of: [distance, Food]
+		var closest = closestFood(bugList[i], foodList);
+
+		// array of: [x, y]
+		var nextPosition = projectedPosition(bugList[i], closest[1]);
+
+		// if this [x, y] violates any other [x, y] in allProjectedPositions,
+		// don't move the bug
+		if (!violatesProjectedPosition(allProjectedPositions, nextPosition)) {
+			bugMove(bugList[i], closest[1]);
+		}
+
+		allProjectedPositions.push(nextPosition);
+	}
+}
+
+/* Compare the projected position of the bug with all the other projected bug positions. 
+If there is a violation, don't move the bug. 
+This fn returns true iff the bug represented by nextPos will collide with any other bug. 
+allPos: list of [[x,y]]
+nextPos: [x,y] */
+function violatesProjectedPosition(allPos, nextPos) {
+	var toReturn = false;
+	var radius = 20;
+
+	for (var i = 0; i < allPos.length; i++) {
+		if (Math.abs(allPos[i][0] - nextPos[0]) < radius && Math.abs(allPos[i][1] - nextPos[1]) < radius) {
+			toReturn = true;	
+			console.log("YES");
+		}
+	}
+	return toReturn;
+}
+
+
+/* Compute the expected position of this bug on the next frame. */
+function projectedPosition(bug, food) {
+	var nextPosition = [bug.x, bug.y];
+  	
+  var speed = 1;
+ 	if (bug.x < food.x) {
+ 		nextPosition[0] += speed;
+ 	} 
+ 	else if (bug.x > food.x) {
+ 		nextPosition[0] -= speed;
+ 	}
+
+ 	if (bug.y < food.y) {
+ 		nextPosition[1] += speed;
+ 	}
+ 	else if (bug.y > food.y) {
+ 		nextPosition[1] -= speed;
+ 	}
+
+ 	return nextPosition;
+}
+
 /* Move bug closer to the food item */
 function bugMove(bug, food) {
-	var speed = 1;
-
+	var speed = bug.speed / 100;
 
 	if (bug.x < food.x) {
 		bug.x += speed;
@@ -54,22 +118,12 @@ function bugMove(bug, food) {
 	else if (bug.x > food.x) {
 		bug.x -= speed;
 	}
-	
-
 	if (bug.y < food.y) {
 		bug.y += speed;
 	}
 	else if (bug.y > food.y) {
 		bug.y -= speed;
 	}
-}
-
-/* move bug to closest food in foodList */
-function moveBugs(bug, foodList) {
-	// array of: [distance, Food]
-	var closest = closestFood(bug, foodList);
-
-	bugMove(bug, closest[1]);
 }
 
 

@@ -42,15 +42,15 @@ var fpsDisplay = document.getElementById('fpsDisplay'),
 foodInit(5);
 
 // Set level text
-var levelText = document.getElementById("level-text");
-levelText.innerText = "Level: " + level;
+function setLevelText() {
+    var levelText = document.getElementById("level-text");
+    levelText.innerText = "Level: " + level;
+}
 
-
-
+setLevelText();
 
 /* START MAIN LOOP */
 start();
-
 
 /* MAIN LOOP VERY IMPORTANT 
 Essentially this runs on every frame. 
@@ -59,6 +59,7 @@ timestamp: What you would expect, the time that this function was invoked
 (automatically passed as a parameter to requestAnimationFrame
 */
 function mainLoop(timestamp) {
+
     // Throttle the frame rate.    
     if (timestamp < lastFrameTimeMs + (1000 / maxFPS)) {
         frameID = requestAnimationFrame(mainLoop);
@@ -101,9 +102,7 @@ function mainLoop(timestamp) {
     }
 
     // Bug movement and calculations
-    for (var i = 0; i < bugList.length; i++) {
-        moveBugs(bugList[i], foodList);
-    }
+    moveBugs(bugList, foodList);
 
     // if bug collides with a food item, remove the food item
     for (var i = 0; i < bugList.length; i++) {
@@ -164,23 +163,27 @@ function gameOver() {
         if (currentHigh < userScore) {
             localStorage.setItem("highScore1", userScore);
         }
+
+        level = 2;
+        setLevelText();
+        reset();
+
     }
     else if (level == 2) {
         var currentHigh = localStorage.getItem("highScore2");
         if (currentHigh < userScore) {
             localStorage.setItem("highScore2", userScore);
         }
+
+        showGameOverButtons();
     }
 
-    showGameOverButtons();
+    
 }
 
 
 
 /* HELPERS */
-
-
-
 /* UTILITY FUNCTIONS (from web source) */
 /* Start the main loop */
 function start() {
@@ -219,19 +222,6 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// restart the game (invoked as an event listener)
-function reset() {
-    timeElapsed = 0;
-    userScore = 0;
-    bugTimer = 3;
-    bugList = [];
-    foodList = [];
-    foodInit(5);
-    start();
-
-    hideGameOverButtons();
-}
-
 
 
 
@@ -247,22 +237,48 @@ function hideGameOverButtons() {
     quitButton.className = "hide";
 }
 
-// click Functions
+// restart the game (invoked as an event listener)
+function reset() {
+    timeElapsed = 0;
+    userScore = 0;
+    bugTimer = 3;
+    bugList = [];
+    foodList = [];
+    foodInit(5);
+    start();
 
+    hideGameOverButtons();
+}
+
+/* CLICK FUNCTIONS */
 // Event Listener
 canvas.addEventListener("click", canvasClicked, false);
 
 // Run this function when the canvas is clicked
 // Loop over the bugList, remove the entries that are within the click radius
 function canvasClicked(e) {
+    pauseAndPlay(e.offsetX, e.offsetY);
     for (var i = 0; i < bugList.length; i++) {
         // midpoint of box
         var bugX = bugList[i].x + bugList[i].w;
         var bugY = bugList[i].y + bugList[i].h;
-        var radius = 15;
+        var radius = 30;
         if (clickRadius(e.offsetX, e.offsetY, bugX, bugY, radius)) {
             userScore += bugList[i].score;
             bugList.splice(i, 1);
+        }
+    }
+}
+
+/* Detect if the pause / play button was pressed. 
+If so, start or stop the game state depending on the current game state. */
+function pauseAndPlay(x, y) {
+    if ((x > 195 && x < 240) && (y > 0 && y < 50)) {
+        if (running) {
+            stop();
+        }
+        else {
+            start();
         }
     }
 }
@@ -282,9 +298,6 @@ function clickRadius(offsetX, offsetY, bugX, bugY, radius) {
 }
 
 
-
-
-
 // Debugging
 document.onmousemove = function(e){
     var x = e.pageX;
@@ -297,7 +310,7 @@ document.onmousemove = function(e){
 var box = document.getElementById('box'),
     boxPos = 10,
     boxLastPos = 10,
-    boxspeed = 0.4,
+    boxspeed = 0.5,
     limit = 300;
 
 
@@ -313,3 +326,4 @@ function drawBox(interp) {
     box.style.left = (boxLastPos + (boxPos - boxLastPos) * interp) + 'px';
     fpsDisplay.textContent = Math.round(fps) + ' FPS';
 }
+
