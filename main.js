@@ -20,7 +20,11 @@ radio2.addEventListener("click", levelSelect);
 submitButton.addEventListener("click", gamePage);
 
 
+<<<<<<< HEAD
 // set high scores if they do not exist yet. update if they do
+=======
+// update / get high scores if they exist
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 if (localStorage.getItem("highScore1") === null) {
 	highScore1 = 0;
 }
@@ -32,9 +36,17 @@ if (localStorage.getItem("highScore2") === null) {
 	highScore2 = 0;
 }
 else {
+<<<<<<< HEAD
 	highScore2 = localStorage.getItem("highScore2");
 }
 
+=======
+	highScore2 = localStorage.getItem("highScore1");
+}
+
+
+
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 levelSelect();
 // Run code when radio button is clicked
 function levelSelect() {

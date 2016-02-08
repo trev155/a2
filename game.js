@@ -16,6 +16,7 @@ var timeElapsed = 0;
 var bugTimer = 3;
 var userScore = 0;
 
+<<<<<<< HEAD
 var resetButton = document.getElementById("reset-button");
 var quitButton = document.getElementById("quit-button");
 
@@ -34,6 +35,27 @@ var fpsDisplay = document.getElementById('fpsDisplay'),
 
 
 
+=======
+// Debugging
+document.onmousemove = function(e){
+    var x = e.pageX;
+    var y = e.pageY;
+    var box = document.getElementById("mouseCoords");
+    box.textContent = "X: " + x + " Y: " + y;
+};
+
+
+/* BEFORE MAIN LOOP RUN CODE */
+
+// make food
+for (var i = 0; i < 5; i++) {
+    makeFood();
+}
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
+
+// Set level text
+var levelText = document.getElementById("level-text");
+levelText.innerText = "Level: " + level;
 
 
 /* BEFORE MAIN LOOP RUN CODE */
@@ -41,6 +63,7 @@ var fpsDisplay = document.getElementById('fpsDisplay'),
 // make food
 foodInit(5);
 
+<<<<<<< HEAD
 // Set level text
 var levelText = document.getElementById("level-text");
 levelText.innerText = "Level: " + level;
@@ -48,6 +71,8 @@ levelText.innerText = "Level: " + level;
 
 
 
+=======
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 /* START MAIN LOOP */
 start();
 
@@ -100,6 +125,7 @@ function mainLoop(timestamp) {
         //bugTimer = 100000000;
     }
 
+<<<<<<< HEAD
     // Bug movement and calculations
     for (var i = 0; i < bugList.length; i++) {
         moveBugs(bugList[i], foodList);
@@ -122,11 +148,22 @@ function mainLoop(timestamp) {
     makeInfoBar();
     // draw the food
     for (var i = 0; i < foodList.length; i++) { drawFood(foodList[i]); }
+=======
+
+    // Bug movement and calculations
+    for (var i=0; i < bugList.length; i++) {
+        
+    }    
+
+
+
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
     // draw the bugs
     for (var i = 0; i < bugList.length; i++) {
         drawBug(bugList[i]);
     }
 
+<<<<<<< HEAD
 
     // after removal of a food item - may end up with none left
     // if so, game over
@@ -135,9 +172,11 @@ function mainLoop(timestamp) {
         gameOver();
         return;
     }
+=======
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 
     // Keep track of time (if > 60 seconds, end)
-    timeElapsed += timestep;
+    timeElapsed = lastFrameTimeMs;
     if (timeElapsed / 1000 > 60) {
         stop();
         gameOver();
@@ -155,11 +194,15 @@ function mainLoop(timestamp) {
 
 
 // Run this code when the game is over (either player lose or time elapsed)
+<<<<<<< HEAD
 // also update the high scores
+=======
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 function gameOver() {
     console.log("Game over");
     // recall that level is a string so use == not ===
     if (level == 1) {
+<<<<<<< HEAD
         var currentHigh = localStorage.getItem("highScore1");
         if (currentHigh < userScore) {
             localStorage.setItem("highScore1", userScore);
@@ -171,6 +214,16 @@ function gameOver() {
             localStorage.setItem("highScore2", userScore);
         }
     }
+=======
+        localStorage.setItem("highScore1", userScore);
+    }
+    else if (level == 2) {
+        localStorage.setItem("highScore2", userScore);
+    }
+}
+
+
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 
     showGameOverButtons();
 }
@@ -180,6 +233,10 @@ function gameOver() {
 /* HELPERS */
 
 
+<<<<<<< HEAD
+=======
+/* UTILITY FUNCTIONS (from web source) */
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 
 /* UTILITY FUNCTIONS (from web source) */
 /* Start the main loop */
@@ -247,6 +304,7 @@ function hideGameOverButtons() {
     quitButton.className = "hide";
 }
 
+<<<<<<< HEAD
 // click Functions
 
 // Event Listener
@@ -312,4 +370,11 @@ function boxUpdate(delta) {
 function drawBox(interp) {
     box.style.left = (boxLastPos + (boxPos - boxLastPos) * interp) + 'px';
     fpsDisplay.textContent = Math.round(fps) + ' FPS';
+=======
+/* OTHER HELPERS */
+
+// rng calculator
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 }

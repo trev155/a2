@@ -4,11 +4,20 @@ body {
     margin: 1px;
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 #box {
     background-color: red;
     height: 20px;
     width: 20px;
+<<<<<<< HEAD
     top: 850px;
+=======
+    top: 700px;
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
     position: absolute;
 
 }
@@ -27,6 +36,7 @@ canvas {
 
 }
 
+<<<<<<< HEAD
 /* Hide by default */
 .hide {
     display: none;
@@ -40,6 +50,8 @@ canvas {
     width: 100px;
 }
 
+=======
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
 /* Centering block object like divs */
 .center-block {
     margin-left: auto;

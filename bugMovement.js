@@ -16,6 +16,7 @@ function calculateDistance(obj1, obj2) {
 	return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
 }
 
+<<<<<<< HEAD
 /* Determine the closest food between bug and all the food left on the canvas. 
 Return the Food object in foodList that was the closest to this bug
 */
@@ -113,3 +114,10 @@ of the rectangle defined by xLeft, xRight, yTop, yBot */
 function isBetween(px, py, xLeft, xRight, yTop, yBot) {
 	return (px >= xLeft && px <= xRight && py >= yTop && py <= yBot);
 }
+=======
+/* Determine the closest food between bug and all the food left on the canvas. */
+function closestFood(bug, foodList) {
+	
+}
+
+>>>>>>> 0b3a34ea97aa440c7ebf6f8f18828d5ea6cb7cf7
